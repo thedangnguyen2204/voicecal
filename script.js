@@ -77,11 +77,23 @@ for(var i = 0;i<number.length;i++){
 	});
 }
 var microphone = document.getElementById('microphone');
+var click_time = 0;
 microphone.onclick = function(){
-	microphone.classList.add("record");
+	click_time += 1;
 	var recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
-	recognition.lang = 'en-US';
-	recognition.start();
+	if (click_time == 1) {
+		speak("Welcome!");
+		setTimeout(function(){
+			microphone.classList.add("record");
+			recognition.lang = 'en-US';
+			recognition.start();
+		},1000);
+	}
+	else {
+		microphone.classList.add("record");
+		recognition.lang = 'en-US';
+		recognition.start();
+	}
 	operations = {"plus":"+",
 				 "minus":"-",
 				 "negative":"-",
@@ -111,7 +123,7 @@ microphone.onclick = function(){
 		setTimeout(function(){
 			var result = evaluate(input);
 			speak("The answer is " + result);
-			printHistory(input)
+			printHistory(input);
 		},3000);
 		microphone.classList.remove("record");
 	}
@@ -146,3 +158,121 @@ function doc_keyUp(e) {
 }
 // register the handler 
 document.addEventListener('keydown', doc_keyUp, false);
+
+function random_gen_math() {
+	random = Math.random()
+	if (random < 0.8) {
+		var x = Math.floor((Math.random() * 10) + 1);
+		var y = Math.floor((Math.random() * 10) + 1);
+		var operation = Math.floor((Math.random() * 4) + 1)
+		var result;
+		switch (operation) {
+			case 1:
+				speak (x + "plus" + y);
+				result = eval(x+y);
+				document.getElementById("output-value").innerText = x + "+" + y;
+				break;
+			case 2:
+				speak (x + "minus" + y);
+				result = eval(x-y);
+				document.getElementById("output-value").innerText = x + "-" + y;
+				break;
+			case 3:
+				speak (x + "multiply" + y);
+				result = eval(x*y);
+				document.getElementById("output-value").innerText = x + "*" + y;
+				break;
+			case 4:
+				if (x % y == 0) {
+					speak (x + "divide" + y);
+					result = eval(x/y);
+					document.getElementById("output-value").innerText = x + "/" + y;
+					break;	
+				}
+				else {
+					speak (x + "+" + y);
+					result = eval(x+y);
+					document.getElementById("output-value").innerText = x + "+" + y;
+					break;	
+				}
+		}
+		return result;
+	}
+	else {
+		var x = Math.floor((Math.random() * 10) + 1);
+		var y = Math.floor((Math.random() * 10) + 1);
+		var z = Math.floor((Math.random() * 10) + 1);
+		var operation = Math.floor((Math.random() * 4) + 1);
+		var result;
+		switch (operation) {
+			case 1:
+				speak (x + "plus" + y + "plus" + z);
+				result = eval(x+y+z);
+				document.getElementById("output-value").innerText = x + "+" + y + "+" + z;
+				break;
+			case 2:
+				speak (x + "minus" + y + "minus" + z);
+				result = eval(x-y-z);
+				document.getElementById("output-value").innerText = x + "-" + y + "-" + z;
+				break;
+			case 3:
+				speak (x + "minus" + y + "plus" + z);
+				result = eval(x-y+z);
+				document.getElementById("output-value").innerText = x + "-" + y + "+" + z;
+				break;
+			case 4:
+				speak (x + "plus" + y + "minus" + z);
+				result = eval(x+y-z);
+				document.getElementById("output-value").innerText = x + "+" + y + "-" + z;
+				break;	
+		}
+		return result;
+	}
+}
+var game = document.getElementById('game');
+game.onclick = function() {
+	speak("Listen and speak! Get ready, go!");
+	var counter = 0;
+	var score = 0;
+	const intervalId = setInterval(function(){
+		result = random_gen_math();
+		counter += 1;
+		console.log(result);
+
+		setTimeout(function(){
+			game.classList.add("record");
+			var recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
+			recognition.lang = 'en-US';
+			recognition.start();
+			recognition.onresult = function(event) {
+				var input = event.results[0][0].transcript;
+				console.log(input);
+				if(result == input && counter == 5){
+					speak("Correct! Finish!");
+					score +=1 ;
+				}
+				else if (result != input && counter == 5) {
+					speak("Incorrect! Finish!");
+				}
+				else if (result == input) {
+					speak("Correct! Next!");
+					score += 1;
+				}
+				else if (result != input) {
+					speak("Incorrect! Next!");
+				}
+				document.getElementById("output-value").innerText = result;
+				game.classList.remove("record");
+			}
+		},4500);	
+
+		
+		if (counter == 5) {
+			clearInterval(intervalId);
+		}
+	},8000);	
+	setTimeout(function(){
+		speak("Well done! You score " + score + "out of 5");
+	},48000);
+}
+	

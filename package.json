@@ -1,19 +1,23 @@
 {
-"name": "voicecal",
-"version": "1.0.0",
-"description": "node app ",
-"main": "server.js",
-"scripts": {
-"start": "node server.js"
-},
-"repository": {
-"type": "git",
-"url": ""
-},
-"author": "",
-"license": "ISC",
-"bugs": {
-"url": ""
-},
-"homepage": ""
+  "name": "voicecal",
+  "version": "1.0.0",
+  "description": "node app ",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "",
+  "dependencies": {
+    "express": "^4.16.4",
+    "heroku": "^7.22.10"
+  }
 }
